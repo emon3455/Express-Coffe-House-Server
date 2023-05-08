@@ -34,6 +34,13 @@ async function run() {
         res.send(result);
     })
 
+    app.get("/coffes/:id" , async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await coffesColletions.findOne(query);
+      res.send(result);
+    })
+
     app.post("/coffes", async(req,res)=>{
         const newCoffe = req.body;
         console.log(newCoffe); 
@@ -47,6 +54,30 @@ async function run() {
       const query = {_id: new ObjectId(id)}
       const result = await coffesColletions.deleteOne(query);
       res.send(result);
+    })
+
+    app.put("/coffes/:id", async(req,res)=>{
+      const id = req.params.id;
+      const coffe = req.body;
+
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert: true};
+
+      const updatedCoffe={
+        $set:{
+          name: coffe.name,
+          chef: coffe.chef,
+          suplier: coffe.suplier,
+          taste: coffe.taste,
+          category: coffe.category,
+          details: coffe.details,
+          photo:coffe.photo
+        }
+      }
+
+      const result = await coffesColletions.updateOne(filter, updatedCoffe, options);
+      res.send(result);
+
     })
 
     // Send a ping to confirm a successful connection
